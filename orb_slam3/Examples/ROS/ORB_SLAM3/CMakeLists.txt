@@ -15,7 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 set(EIGEN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/../../../../../../devel/include/eigen3)
-find_package(Eigen3 3.3.4 EXACT REQUIRED)
+#find_package(Eigen3 3.3.4 EXACT REQUIRED)
 
 MESSAGE("Build type: " ${ROS_BUILD_TYPE})
 

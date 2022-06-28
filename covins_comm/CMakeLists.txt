@@ -10,7 +10,7 @@ IF(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE RelWithDebInfo)
 ENDIF()
 
-find_package(Eigen3 3.3.4 EXACT REQUIRED)
+#find_package(Eigen3 3.3.4 EXACT REQUIRED)
 
 include_directories(
     "include/covins"

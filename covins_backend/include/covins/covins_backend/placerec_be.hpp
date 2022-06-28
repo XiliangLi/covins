@@ -40,6 +40,8 @@
 #include "covins_base/vocabulary.h"
 #include "covins_base/placerec_base.hpp"
 
+#include <coxgraph_mod/loop_closure_publisher.h>
+
 namespace covins {
 
 class Keyframe;
@@ -138,6 +140,8 @@ protected:
 
     bool                        finish_                                                 = false;
     bool is_finished_ = false;
+
+    coxgraph::mod::LoopClosurePublisher::Ptr loop_pub_;
 };
 
 } //end ns

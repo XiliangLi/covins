@@ -32,7 +32,7 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${g2o_LIBRARY_OUTPUT_DIRECTORY})
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${g2o_LIBRARY_OUTPUT_DIRECTORY})
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${g2o_RUNTIME_OUTPUT_DIRECTORY})
 
-find_package(Eigen3 3.3.4 EXACT REQUIRED)
+#find_package(Eigen3 3.3.4 EXACT REQUIRED)
 
 # Set search directory for looking for our custom CMake scripts to
 # look for SuiteSparse, QGLViewer, and Eigen3.

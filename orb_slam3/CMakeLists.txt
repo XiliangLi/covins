@@ -8,7 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 set(EIGEN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/../../../devel/include/eigen3)
-find_package(Eigen3 3.3.4 EXACT REQUIRED)
+#find_package(Eigen3 3.3.4 EXACT REQUIRED)
 
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release)
