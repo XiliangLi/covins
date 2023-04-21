@@ -46,3 +46,9 @@ lib/
 .ccls-cache/
 .ccls
 compile_commands.json
+
+# Ide
+.vscode/**
+
+# output
+covins_backend/output/**

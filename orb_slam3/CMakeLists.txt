@@ -5,6 +5,8 @@ find_package(catkin REQUIRED COMPONENTS
              covins_comm
              eigen_catkin
              opencv3_catkin
+             coxgraph_mod
+             
 )
 
 set(EIGEN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/../../../devel/include/eigen3)
@@ -63,6 +65,7 @@ ${PROJECT_SOURCE_DIR}/include/CameraModels
 ${EIGEN3_INCLUDE_DIR}
 ${Pangolin_INCLUDE_DIRS}
 ${covins_comm_INCLUDE_DIRS}
+${coxgraph_mod_INCLUDE_DIRS}
 ${PROJECT_SOURCE_DIR}/include/comm
 ${PROJECT_SOURCE_DIR}/Thirdparty/
 )
@@ -139,6 +142,7 @@ ${Pangolin_LIBRARIES}
 ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
 ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
 ${covins_comm_LIBRARIES}
+${coxgraph_mod_LIBRARIES}
 -lboost_serialization
 -lcrypto
 )

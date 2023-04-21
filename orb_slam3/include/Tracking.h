@@ -158,6 +158,16 @@ public:
 
     vector<MapPoint*> GetLocalMapMPS();
 
+    // get imu calib data
+    IMU::Calib* getImuCalib() {
+        return mpImuCalib;
+    }
+
+    // get atlas 
+    Atlas* getAtlaser() {
+        return mpAtlas;
+    }
+
     bool mbWriteStats;
 
 #ifdef REGISTER_TIMES

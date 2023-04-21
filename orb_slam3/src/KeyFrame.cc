@@ -94,6 +94,7 @@ auto KeyFrame::ConvertToMsg(covins::MsgKeyframe &msg, KeyFrame *kf_ref, bool is_
                                            damax,dgmax,dsigmaac,dsigmagc,dsigmaba,dsigmabg,dsigmaawc,dsigmagwc,
                                            dtau,dg,va0,irate,dDelayC0toIMU,dDelayC1toIMU);
         msg.calibration = covins_calib;
+        
     }
 
     if(!is_update){
@@ -101,6 +102,7 @@ auto KeyFrame::ConvertToMsg(covins::MsgKeyframe &msg, KeyFrame *kf_ref, bool is_
         msg.img_dim_y_min = 0; //this->mnMinY; -- this is not the image dimension (presumably the undistorted dimensions)
         msg.img_dim_x_max = img_width; //this->mnMaxX; -- this is not the image dimension (presumably the undistorted dimensions)
         msg.img_dim_y_max = img_height; //this->mnMaxY; -- this is not the image dimension (presumably the undistorted dimensions)
+        // msg.img = imgLeft.clone(); // 传输图片数据
     }
 
     if(!is_update){

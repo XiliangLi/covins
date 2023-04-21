@@ -290,6 +290,9 @@ Frame::Frame(const cv::Mat &imGray, const double &timeStamp, ORBextractor* extra
     // Frame ID
     mnId=nNextId++;
 
+    // debug
+    // imgLeft = imGray.clone();
+
     // Scale Level Info
     mnScaleLevels = mpORBextractorLeft->GetLevels();
     mfScaleFactor = mpORBextractorLeft->GetScaleFactor();

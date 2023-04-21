@@ -100,6 +100,7 @@ public:
     bool mbNotBA1;
     bool mbNotBA2;
     bool mbBadImu;
+    bool mbVIBA2;
 
     bool mbWriteStats;
 

@@ -83,6 +83,43 @@ auto PlaceRecognition::ComputeSE3() -> bool {
       continue;
     }
 
+    // 保存所有候选帧
+
+    // int rows = kf_query_->img_dim_y_max_;
+    // int cols = kf_query_->img_dim_x_max_;
+    // covins::KeyframeBase::idpair curid = kf_query_->id_;
+    // covins::KeyframeBase::idpair oldid = pKF->id_;
+    // cv::Mat old_img = pKF->img_.clone();
+    // cv::Mat cur_img = kf_query_->img_.clone();
+    
+    // cv::Mat gap_image(rows, 10, CV_8UC1, cv::Scalar(255, 255, 255));
+    // cv::Mat gray_img, loop_match_img;
+  
+    // cv::hconcat(cur_img, gap_image, gap_image);
+    // cv::hconcat(gap_image, old_img, gray_img);
+
+    // // cvCvtColor((CvArr*)&gray_img, (CvArr*)&loop_match_img, CV_GRAY2RGB);
+    // // cv::Mat notation(50, kf_query_->img_dim_x_max_ * 2 + 10, CV_8UC3, cv::Scalar(255, 255, 255));
+    // // CvFont font;
+    // // cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5);
+    // // cvPutText((CvArr*)&notation, ("current frame client id: " + to_string(kf_query_->id_.second) + "     previous frame client id: " + to_string(kf_match_->id_.second)).c_str(),
+    // //                                   cvPoint(20, 30), &font, cvScalar(255));
+    // // cv::vconcat(notation, loop_match_img, loop_match_img);
+
+    // // cv::imshow("loop connection", loop_match_img);
+    // // cv::waitKey(1000);
+
+    // cvtColor(gray_img, loop_match_img, CV_GRAY2RGB);
+    // cv::Mat notation(50, cols * 2 + 10, CV_8UC3, cv::Scalar(255, 255, 255));
+    // putText(notation, "current frame client id: " + to_string(curid.first) + "   previous frame client id: " + to_string(oldid.first), 
+    //                   cv::Point2f(20, 30), 
+    //                   cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255), 3);
+    // cv::vconcat(notation, loop_match_img, loop_match_img);
+    // cv::imwrite("/home/lxl/catkin_lxy/src/covins/covins_backend/output/loop_image/" 
+    //                     + to_string(curid.first) + "+" + to_string(oldid.first) + ".jpg", 
+    //                     loop_match_img);
+
+
     // Setup the threaded BF matcher
     std::shared_ptr<LandmarkMatchingAlgorithm> matchingAlgorithm(
         new LandmarkMatchingAlgorithm(50.0)); // default: 50.0
@@ -153,7 +190,7 @@ auto PlaceRecognition::ComputeSE3() -> bool {
     const Eigen::Matrix4d Twc2 = pKFi->GetPoseTwc();
     Eigen::Matrix4d T12 = Twc1.inverse() * Twc2;
 
-    matcher.SearchBySE3(kf_query_, pKFi, vvpMapPointMatches[i], T12,
+    int nFound = matcher.SearchBySE3(kf_query_, pKFi, vvpMapPointMatches[i], T12,
                         covins_params::matcher::search_radius_SE3);
 
     size_t numInitialMatches = 0;
@@ -163,9 +200,11 @@ auto PlaceRecognition::ComputeSE3() -> bool {
         ++numInitialMatches;
       }
     }
+    cout << "=========================== after searchbyse3 matches: " << nFound << endl;
 
     const int numInliersOpt = Optimization::OptimizeRelativePose(
         kf_query_, pKFi, vvpMapPointMatches[i], T12, 4.0f);
+    std::cout << "numInlier after Optimization RelativePose: " << numInliersOpt << " ===============================" << std::endl;
 
     if (numInliersOpt < covins_params::placerec::inliers_thres) {
       vbDiscarded[i] = true;
@@ -177,9 +216,53 @@ auto PlaceRecognition::ComputeSE3() -> bool {
       mTcw = Twc1corr.inverse();
       kf_match_ = pKFi;
       mvpCurrentMatchedPoints = vvpMapPointMatches[i];
-      break;
+      // break;
     }
   }
+
+  // check loop match image
+  if(bMatch && kf_match_) {
+    // if(false) {
+
+    // std::unique_lock<std::mutex> lock(mtx_in_);
+    int rows = kf_query_->img_dim_y_max_;
+    int cols = kf_query_->img_dim_x_max_;
+    covins::KeyframeBase::idpair curid = kf_query_->id_;
+    covins::KeyframeBase::idpair oldid = kf_match_->id_;
+    cv::Mat old_img = kf_match_->img_.clone();
+    cv::Mat cur_img = kf_query_->img_.clone();
+    
+    cv::Mat gap_image(rows, 10, CV_8UC1, cv::Scalar(255, 255, 255));
+    cv::Mat gray_img, loop_match_img;
+  
+    cv::hconcat(cur_img, gap_image, gap_image);
+    cv::hconcat(gap_image, old_img, gray_img);
+
+    // cvCvtColor((CvArr*)&gray_img, (CvArr*)&loop_match_img, CV_GRAY2RGB);
+    // cv::Mat notation(50, kf_query_->img_dim_x_max_ * 2 + 10, CV_8UC3, cv::Scalar(255, 255, 255));
+    // CvFont font;
+    // cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5);
+    // cvPutText((CvArr*)&notation, ("current frame client id: " + to_string(kf_query_->id_.second) + "     previous frame client id: " + to_string(kf_match_->id_.second)).c_str(),
+    //                                   cvPoint(20, 30), &font, cvScalar(255));
+    // cv::vconcat(notation, loop_match_img, loop_match_img);
+
+    // cv::imshow("loop connection", loop_match_img);
+    // cv::waitKey(1000);
+
+    cvtColor(gray_img, loop_match_img, CV_GRAY2RGB);
+    cv::Mat notation(50, cols * 2 + 10, CV_8UC3, cv::Scalar(255, 255, 255));
+    putText(notation, "current frame client id: " + to_string(curid.first) + "   previous frame client id: " + to_string(oldid.first), 
+                      cv::Point2f(20, 30), 
+                      cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255), 3);
+    cv::vconcat(notation, loop_match_img, loop_match_img);
+    cv::imwrite("/home/lxl/catkin_lxy/src/covins/covins_backend/output/loop_image/" 
+                        + to_string(curid.first) + "+" + to_string(oldid.first) + ".jpg", 
+                        loop_match_img);
+    // cv::imshow("loop connection", loop_match_img);
+    // cv::waitKey(0);
+  }
+  
+  
 
   if (!bMatch) {
     for (size_t i = 0; i < nInitialCandidates; i++) {
@@ -222,7 +305,7 @@ auto PlaceRecognition::ComputeSE3() -> bool {
       nTotalMatches++;
     }
   }
-
+  cout << "=========================nTotalMatches: " << nTotalMatches << endl;
   if (nTotalMatches >= covins_params::placerec::total_matches_thres) {
     for (size_t i = 0; i < nInitialCandidates; i++) {
       if (mvpEnoughConsistentCandidates[i] != kf_match_) {
@@ -346,10 +429,16 @@ auto PlaceRecognition::CorrectLoop() -> bool {
   PoseMap corrected_poses;
   this->ConnectLoop(kf_query_, kf_match_, T_smatch_squery, corrected_poses,
                     map_query);
-
+  
+  loop_pub_->publishLoopClosure(                      
+        kf_query_->id_.second, kf_query_->timestamp_,
+        kf_match_->id_.second, kf_match_->timestamp_,
+        T_smatch_squery);
+  std::cout << " ============================= " << kf_query_->id_.second << " -> " << kf_match_->id_.second << " =======================";      
   if (map_query->GetKeyframe(kf_match_->id_)) {
     LoopConstraint lc(kf_match_, kf_query_, T_smatch_squery);
     map_query->AddLoopConstraint(lc);
+    std::cout << " =============================in " << kf_query_->id_.second << " -> " << kf_match_->id_.second << " in=======================";
     if (perform_pgo_) {
       KeyframeVector current_connections_query =
           kf_query_->GetConnectedKeyframesByWeight(0);
@@ -366,12 +455,17 @@ auto PlaceRecognition::CorrectLoop() -> bool {
     merge.kf_query = kf_query_;
     merge.kf_match = kf_match_;
     merge.T_smatch_squery = T_smatch_squery;
-    loop_pub_->publishLoopClosure(
-        merge.kf_match->id_.first, merge.kf_match->timestamp_,
-        merge.kf_query->id_.first, merge.kf_query->timestamp_,
-        merge.T_smatch_squery);
-    mapmanager_->RegisterMerge(merge);
+    // loop_pub_->publishLoopClosure(
+    //     merge.kf_match->id_.second, merge.kf_match->timestamp_,
+    //     merge.kf_query->id_.second, merge.kf_query->timestamp_,
+    //     merge.T_smatch_squery);
+    // mapmanager_->RegisterMerge(merge);
   }
+
+  // loop_pub_->publishLoopClosure(                      // 为什么只有 map fusion 没有 loop closure 呢?
+  //       kf_query_->id_.second, kf_query_->timestamp_,
+  //       kf_match_->id_.second, kf_match_->timestamp_,
+  //       T_smatch_squery);
 
   mapmanager_->ReturnMap(kf_query_->id_.second, check_num_map);
 
@@ -424,11 +518,12 @@ auto PlaceRecognition::DetectLoop() -> bool {
   // Query the database imposing the minimum score
   auto database = mapmanager_->GetDatabase();
   KeyframeVector vpCandidateKFs =
-      database->DetectCandidates(kf_query_, minScore * 0.8);
+      // database->DetectCandidates(kf_query_, minScore * 0.8);
+      database->DetectCandidates(kf_query_, minScore);
 
   // If there are no loop candidates, just add new keyframe and return false
   if (vpCandidateKFs.empty()) {
-    mvConsistentGroups.clear(); // Danger: Why deleting the found consistent
+    // mvConsistentGroups.clear(); // Danger: Why deleting the found consistent
                                 // groups in this case?
     kf_query_->SetErase();
     return false;
@@ -574,7 +669,9 @@ auto PlaceRecognition::Run() -> void {
       if (detected) {
         num_detected++;
         bool found_se3 = ComputeSE3();
+        std::cout << "-------------+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
         if (found_se3) {
+          std::cout << "-------------++++++++++++++++++++++++++++++++------------------------------------" << endl;
           this->CorrectLoop();
         }
       }

@@ -83,7 +83,7 @@ bool Se3Solver::projectiveAlignment(
   sacProb.threshold_ = threshold;
   sacProb.max_iterations_ = mMaxIter;
   sacProb.computeModel(0);
-
+  cout << "====================== sacProb.inliers: " << sacProb.inliers_.size() << endl;
   if (sacProb.inliers_.size() < mMinInliers) {
     return false;
   }

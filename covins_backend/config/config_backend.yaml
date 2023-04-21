@@ -19,7 +19,7 @@ sys.trajectory_format: 'TUM' # {EUROC|TUM}
 #--------------------------------------------------------------------------------------------
 
 # maps are loaded from here (use absolute path)
-sys.map_path0: '/home/mikexyl/Workspaces/covins_ws/src/covins/covins_backend/output/map_data'
+sys.map_path0: '/home/lxl/catkin_lxy/src/covins/covins_backend/output/map_data'
 
 #--------------------------------------------------------------------------------------------
 # Features
@@ -66,13 +66,13 @@ placerec.min_loop_dist: 10 # minimum number of KFs between the two ends of the l
 placerec.cov_consistency_thres: 3
 
 placerec.solver_iterations: 5
-placerec.matches_thres: 20
+placerec.matches_thres: 10
 placerec.matches_thres_merge: 20
-placerec.inliers_thres: 20
+placerec.inliers_thres: 10
 
 placerec.total_matches_thres: 40
 
-placerec.ransac.min_inliers: 6
+placerec.ransac.min_inliers: 5
 placerec.ransac.probability: 0.99
 placerec.ransac.max_iterations: 300
 placerec.ransac.class_threshold: 25

@@ -12,7 +12,11 @@ find_package(catkin REQUIRED COMPONENTS
              opencv3_catkin
              eigen_catkin
              cv_bridge
+             coxgraph_mod
 )
+
+#find_package(catkin_simple REQUIRED)
+#catkin_simple(ALL_DEPS_REQUIRED)
 
 set(EIGEN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/../../../../../../devel/include/eigen3)
 #find_package(Eigen3 3.3.4 EXACT REQUIRED)
@@ -58,6 +62,8 @@ ${PROJECT_SOURCE_DIR}/../../../include
 ${PROJECT_SOURCE_DIR}/../../../include/CameraModels
 ${Pangolin_INCLUDE_DIRS}
 ${covins_comm_INCLUDE_DIRS}
+${coxgraph_mod_INCLUDE_DIRS}
+#${catkin_INCLUDE_DIRS}
 # include /Thirdparty for cereal
 ${PROJECT_SOURCE_DIR}/../../../Thirdparty
 )
@@ -71,6 +77,8 @@ ${PROJECT_SOURCE_DIR}/../../../Thirdparty/g2o/lib/libg2o.so
 ${PROJECT_SOURCE_DIR}/../../../lib/libORB_SLAM3.so
 -lboost_system
 ${covins_comm_LIBRARIES}
+${coxgraph_mod_LIBRARIES}
+#${catkin_LIBRARIES}
 )
 
 # Node for monocular camera

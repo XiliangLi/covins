@@ -34,6 +34,10 @@
 #include <mutex>
 #include "Thirdparty/g2o/g2o/types/types_seven_dof_expmap.h"
 
+// coxgraph
+#include <ros/ros.h>
+#include <coxgraph_mod/vio_interface.h>
+
 namespace ORB_SLAM3
 {
 
@@ -84,6 +88,9 @@ public:
     bool isFinished();
 
     Viewer* mpViewer;
+
+    // coxgraph
+    coxgraph::mod::VIOInterface* vio_interface;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -219,6 +226,8 @@ protected:
     vector<double> vdPR_CurrentTime;
     vector<double> vdPR_MatchedTime;
     vector<int> vnPR_TypeRecogn;
+
+    
 };
 
 } //namespace ORB_SLAM

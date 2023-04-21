@@ -40,6 +40,11 @@ LoopClosing::LoopClosing(Atlas *pAtlas, KeyFrameDatabase *pDB, ORBVocabulary *pV
 {
     mnCovisibilityConsistencyTh = 3;
     mpLastCurrentKF = static_cast<KeyFrame*>(NULL);
+
+    // coxgraph
+    ros::NodeHandle n;
+    
+    vio_interface = new coxgraph::mod::VIOInterface(n, ros::NodeHandle("~"));
 }
 
 void LoopClosing::SetTracker(Tracking *pTracker)
@@ -63,6 +68,7 @@ void LoopClosing::Run()
         //----------------------------
         if(CheckNewKeyFrames())
         {
+            // std::cout << "=================================== enter loop detect ============================" << endl;
             if(mpLastCurrentKF)
             {
                 mpLastCurrentKF->mvpLoopCandKFs.clear();
@@ -88,6 +94,7 @@ void LoopClosing::Run()
 
             if(bDetected)
             {
+                std::cout << "===================================  loop detected ============================" << endl;
                 if(mbMergeDetected)
                 {
                     if ((mpTracker->mSensor==System::IMU_MONOCULAR ||mpTracker->mSensor==System::IMU_STEREO) &&
@@ -211,6 +218,26 @@ void LoopClosing::Run()
                             }
 
                             mvpLoopMapPoints = mvpLoopMPs;//*mvvpLoopMapPoints[nCurrentIndex];
+
+                            // // coxgraph
+                            // cv::Mat Tcw2 = mpCurrentKF->GetPose();
+                            // Eigen::Matrix4d T_temp =  Converter::toMatrix4d(Tcw2);
+                            // cv::Mat Tw2c = Converter::toCvSE3(T_temp.block<3, 3>(0, 0),T_temp.block<3, 1>(0, 3));
+
+                            // g2o::Sim3 Scw1 = mg2oLoopScw;
+                            // Eigen::Matrix3d eigR = Scw1.rotation().toRotationMatrix();
+                            // Eigen::Vector3d eigt = Scw1.translation();
+                            // double s = Scw1.scale();
+                            // eigt *= (1.0 / s); 
+                            // Eigen::Matrix3d eigR_inverse = eigR.transpose();
+                            // cv::Mat Tcw1 = Converter::toCvSE3(eigR_inverse, (-1) * eigR_inverse * eigt);
+
+                            // cv::Mat Tbc = mpCurrentKF->mImuCalib.Tbc;
+                            // cv::Mat Tcb = mpCurrentKF->mImuCalib.Tcb;
+                            // cv::Mat Tt1t2 = Tbc * Tcw1 * Tw2c * Tcb;
+                            // Eigen::Matrix4d T12 = Converter::toMatrix4d(Tt1t2); 
+                            
+                            // // vio_interface->publishLoopClosure(mpMatchedKF->mTimeStamp, mpCurrentKF->mTimeStamp, T12);
 
 #ifdef REGISTER_TIMES
                             std::chrono::steady_clock::time_point time_StartLoop = std::chrono::steady_clock::now();
@@ -831,7 +858,7 @@ int LoopClosing::FindMatchesByProjection(KeyFrame* pCurrentKF, KeyFrame* pMatche
 
 void LoopClosing::CorrectLoop()
 {
-    cout << "Loop detected!" << endl;
+    cout << "====================================== Loop detected!=========================" << endl;
 
     // Send a stop signal to Local Mapping
     // Avoid new keyframes are inserted while correcting the loop
@@ -881,6 +908,29 @@ void LoopClosing::CorrectLoop()
         unique_lock<mutex> lock(pLoopMap->mMutexMapUpdate);
 
         const bool bImuInit = pLoopMap->isImuInitialized();
+
+        // coxgraph
+        cv::Mat Tcw2 = mpCurrentKF->GetPose();
+        Eigen::Matrix4d T_temp =  Converter::toMatrix4d(Tcw2);
+        cv::Mat Tw2c = Converter::toCvSE3(T_temp.block<3, 3>(0, 0),T_temp.block<3, 1>(0, 3));
+
+        g2o::Sim3 Scw1 = mg2oLoopScw;
+        Eigen::Matrix3d eigR = Scw1.rotation().toRotationMatrix();
+        Eigen::Vector3d eigt = Scw1.translation();
+        double s = Scw1.scale();
+        eigt *= (1.0 / s); 
+        Eigen::Matrix3d eigR_inverse = eigR.transpose();
+        cv::Mat Tcw1 = Converter::toCvSE3(eigR_inverse, (-1) * eigR_inverse * eigt);
+
+        cv::Mat Tbc = mpCurrentKF->mImuCalib.Tbc;
+        cv::Mat Tcb = mpCurrentKF->mImuCalib.Tcb;
+        cv::Mat Tt1t2 = Tbc * Tcw1 * Tw2c * Tcb;
+        Eigen::Matrix4d T12 = Converter::toMatrix4d(Tt1t2); 
+        
+        vio_interface->publishLoopClosure(mpLoopMatchedKF->mTimeStamp, mpCurrentKF->mTimeStamp, T12);
+        // mpLoopMatchedKF;
+        // mpMatchedKF;
+        // mpMergeMatchedKF;
 
         for(vector<KeyFrame*>::iterator vit=mvpCurrentConnectedKFs.begin(), vend=mvpCurrentConnectedKFs.end(); vit!=vend; vit++)
         {

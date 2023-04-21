@@ -32,6 +32,8 @@
 #include <vector>
 
 #include <eigen3/Eigen/Core>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/eigen.hpp>
 
 // COVINS
 #include <covins/covins_base/typedefs_base.hpp>

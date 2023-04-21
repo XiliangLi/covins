@@ -1,0 +1,12 @@
+<?xml version = "1.0"?>
+<launch>
+    <!-- <arg name = "debug" default = "true"/> -->
+    <arg name = "num_agents" default = "3"/>
+
+    <!-- <arg unless = "$(arg debug)" name = "launch_prefix" value = "gnome-terminal -e"/> -->
+    <!-- <arg if = "$(arg debug)" name = "launch_prefix" value = "xterm -e gdb -ex run -args"/> -->
+    <!-- <arg if = "$(arg debug)" name = "launch_prefix" value = "xterm -e gdb -ex run -args"/> -->
+    
+    <node pkg = "covins_backend" type = "covins_backend_node" name = "covins_backend_node"   launch-prefix = "gnome-terminal -x gdb -ex run"/>
+        <param name = "COVINS_BackEnd/num_agents" value = "$(arg num_agents)"/>
+</launch>

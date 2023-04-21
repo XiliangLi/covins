@@ -226,11 +226,17 @@ auto Communicator::Run()->void {
         if(covins_params::comm::data_to_client) {
             auto now = std::chrono::steady_clock::now();
             std::chrono::duration<double> diff = now-last;
-            if(diff.count() > wait_time) {
+            if(diff.count() > wait_time) {   
                 this->CollectDataForAgent();
                 last = now;
             }
             this->ProcessBufferOut();
+            // 上面的处理应该是有点问题的, 虽然没有向 agent 发送数据
+            // if(diff.count() > wait_time) {
+            //     this->ProcessBufferOut();
+            //     last = now;
+            // }
+            // this->CollectDataForAgent();
         }
 
         this->ProcessBufferIn();

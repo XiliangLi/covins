@@ -41,6 +41,8 @@
 
 // COVINS
 #include "comm/communicator.hpp"
+// coxgraph
+#include <ros/ros.h>
 
 namespace ORB_SLAM3
 {
@@ -174,6 +176,19 @@ public:
     bool isFinished();
 
     void ChangeDataset();
+
+    // Tracker pointer
+    Tracking* getTracker() {
+        return mpTracker;
+    }
+    
+    LoopClosing* getLoopCloser() {
+        return mpLoopCloser;
+    }
+
+    LocalMapping* getLocalMapper() {
+        return mpLocalMapper;
+    }
 
 #ifdef REGISTER_TIMES
     void InsertRectTime(double& time);

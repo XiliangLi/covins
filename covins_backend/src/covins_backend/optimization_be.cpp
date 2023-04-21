@@ -810,17 +810,18 @@ auto Optimization::OptimizeRelativePose(KeyframePtr kf1, KeyframePtr kf2, Landma
         Eigen::Vector2d residB(residualsB[residInd], residualsB[residInd + 1]);
         residInd += 2;
         if (residA.norm() > covins_params::opt::th_outlier_align || residB.norm() > covins_params::opt::th_outlier_align) {
+            std::cout << "============== residA.norm: " << residA.norm() << " residB.norm: " << residB.norm() << "================" << std::endl;
             problem.RemoveResidualBlock(residIdsA[i]);
             problem.RemoveResidualBlock(residIdsB[i]);
             matches1[i] = NULL;
             ++numBad;
         }
     }
-
+    std::cout << "======================= numCorrespondence: " << numCorrespondences << "==============================" << std::endl;
     // Perform outlier-"free" optimization
-    if (numCorrespondences - numBad < 12) {
-        return 0;
-    }
+    // if (numCorrespondences - numBad < 12) {
+    //     return 0;
+    // }
     solver_options.max_num_iterations = 5;
     ceres::Solve(solver_options, &problem, &summary);
   //  std::cout << summary.FullReport() << std::endl;

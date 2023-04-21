@@ -15,7 +15,7 @@ echo "File directory: ${BASEDIR}"
 cd ${BASEDIR}/..
 wstool init
 wstool merge covins/dependencies.rosinstall
-wstool up
+#wstool up        # not update
 chmod +x covins/fix_eigen_deps.sh
 ./covins/fix_eigen_deps.sh
 
